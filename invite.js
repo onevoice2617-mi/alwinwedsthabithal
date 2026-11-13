@@ -1,5 +1,7 @@
 const intro = document.querySelector('.site-intro');
 const openingImage = document.querySelector('.opening-art img');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const opening = openingImage.closest('.image-section');
 
 function finishIntroWhenReady() {
   const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 820));
@@ -8,7 +10,10 @@ function finishIntroWhenReady() {
 }
 
 intro.addEventListener('animationend', event => {
-  if (event.target === intro) intro.hidden = true;
+  if (event.target !== intro) return;
+  intro.hidden = true;
+  opening.classList.add('scene-entered');
+  observeScenes();
 });
 
 finishIntroWhenReady();
@@ -18,6 +23,27 @@ window.addEventListener('pageshow', event => {
   intro.hidden = false;
   finishIntroWhenReady();
 });
+
+function observeScenes() {
+  if (!('IntersectionObserver' in window)) return;
+
+  // Play a scene once when it enters view. Scrolling stays in the browser's control.
+  const scenes = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      const minimumVisible = entry.target.id === 'ceremony' ? .67 :
+        entry.target.classList.contains('venue') ? .52 : .28;
+      if (entry.intersectionRatio < minimumVisible) continue;
+      entry.target.classList.add('scene-entered');
+      scenes.unobserve(entry.target);
+    }
+  }, { threshold: [.28, .52, .67] });
+
+  for (const section of document.querySelectorAll('.image-section:not(.opening, .scene-entered)')) {
+    scenes.observe(section);
+  }
+}
+
+if (reducedMotion.matches) observeScenes();
 
 const countdown = document.querySelector('.countdown');
 const units = [...countdown.querySelectorAll('[data-unit]')];
@@ -57,8 +83,6 @@ function updateCountdown() {
     const value = String(values[index]).padStart(2, '0');
     if (unit.textContent === value) return;
     unit.textContent = value;
-    unit.classList.remove('tick');
-    requestAnimationFrame(() => unit.classList.add('tick'));
   });
 
   countdownTimeout = window.setTimeout(updateCountdown, 1000 - now % 1000);
@@ -72,150 +96,42 @@ document.addEventListener('visibilitychange', () => {
   updateCountdown();
 });
 
-const filmMotion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 540px)');
-const film = document.querySelector('.film');
-const stage = film.querySelector('.film-stage');
-const progressLine = document.querySelector('.reading-line');
-const nextScene = film.querySelector('.film-next');
-const scenes = [...film.querySelectorAll('[data-scene]')];
+const dateTrigger = document.querySelector('.date-trigger');
+const dateCard = document.querySelector('.date-card');
+const confetti = document.querySelector('.date-confetti');
 
-// Each cut starts before the preceding shot ends. Times are in viewport heights.
-const cuts = [
-  { start: 1.52, end: 2.10, glow: 0.36, origin: '50% 44%' },
-  { start: 2.52, end: 3.06, glow: 0.48, origin: '57% 46%' },
-  { start: 3.48, end: 4.03, glow: 0.31, origin: '48% 56%' },
-  { start: 4.52, end: 5.08, glow: 0.42, origin: '42% 60%' },
-  { start: 5.53, end: 6.18, glow: 0.22, origin: '55% 52%' }
-];
-const stops = [
-  { id: 'invitation', time: 0.96 },
-  { id: 'arrival', time: 2.22 },
-  { id: 'details', time: 3.18 },
-  { id: 'ceremony', time: 4.16 },
-  { id: 'venues', time: 5.20 },
-  { id: 'closing', time: 6.29 }
-];
-const filmDuration = 6.48;
-let frame = 0;
-let seekFrame = 0;
-let previousActive = -1;
-film.style.setProperty('--film-duration', filmDuration);
-
-function easeBetween(value, start, end) {
-  const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
-  return t * t * (3 - 2 * t);
-}
-
-function playAt(time) {
-  const mixes = cuts.map(cut => easeBetween(time, cut.start, cut.end));
-  const active = mixes.filter(mix => mix >= 0.5).length;
-
-  scenes.forEach((scene, index) => {
-    const incoming = mixes[index - 1] ?? 1;
-    const outgoing = mixes[index] ?? 0;
-    const start = cuts[index - 1]?.start ?? 0;
-    const end = cuts[index]?.end ?? filmDuration;
-    const camera = Math.max(0, Math.min(1, (time - start) / (end - start)));
-    const caption = easeBetween(incoming, 0.42, 1) * (1 - easeBetween(outgoing, 0, 0.58));
-
-    scene.style.setProperty('--mix', incoming);
-    scene.style.setProperty('--shot-visibility', incoming > 0 && outgoing < 1 ? 'visible' : 'hidden');
-    scene.style.setProperty('--scene-progress', camera);
-    scene.style.setProperty('--caption', caption);
-    scene.style.setProperty('--push', outgoing * (index === 0 ? 0.31 : 0.13));
-
-    if (active !== previousActive) scene.inert = index !== active;
-  });
-  previousActive = active;
-
-  const boardEnter = easeBetween(time, 0.29, 0.83);
-  const boardExit = easeBetween(time, 1.17, 1.77);
-  const titleOpacity = 1 - easeBetween(time, 0.22, 0.58);
-  stage.style.setProperty('--title-opacity', titleOpacity);
-  stage.style.setProperty('--board-enter', boardEnter);
-  stage.style.setProperty('--board-exit', boardExit);
-  stage.style.setProperty('--board-opacity', boardEnter * (1 - boardExit));
-
-  const cutIndex = mixes.findIndex(mix => mix > 0 && mix < 1);
-  if (cutIndex >= 0) {
-    const { glow, origin } = cuts[cutIndex];
-    stage.style.setProperty('--light', Math.sin(mixes[cutIndex] * Math.PI) * glow);
-    stage.style.setProperty('--light-origin', origin);
+dateCard.hidden = true;
+dateTrigger.hidden = false;
+dateTrigger.addEventListener('click', () => {
+  const animate = !reducedMotion.matches;
+  if (animate) {
+    dateTrigger.classList.add('is-opening');
+    window.setTimeout(() => { dateTrigger.hidden = true; }, 560);
   } else {
-    stage.style.setProperty('--light', 0);
+    dateTrigger.hidden = true;
   }
+  dateCard.hidden = false;
+  dateCard.classList.add('just-revealed');
+  dateCard.querySelector('time').focus({ preventScroll: true });
 
-  const upcoming = stops.find(stop => stop.time > time + 0.17);
-  nextScene.hidden = !upcoming;
-  if (upcoming && nextScene.dataset.stop !== upcoming.id) {
-    nextScene.dataset.stop = upcoming.id;
-    nextScene.setAttribute('aria-label', upcoming.id === 'invitation' ? 'Scroll to begin' : 'Next scene');
+  if (!animate) return;
+
+  const colors = ['#a14c35', '#d49358', '#788655', '#eab09e', '#cba45e'];
+  const pieces = document.createDocumentFragment();
+  for (let index = 0; index < 38; index += 1) {
+    const angle = (index / 38) * 2 * Math.PI;
+    const reach = 70 + (index % 7) * 20;
+    const piece = document.createElement('span');
+    piece.style.setProperty('--x', Math.cos(angle) * reach + 'px');
+    piece.style.setProperty('--y', Math.sin(angle) * reach + 'px');
+    piece.style.setProperty('--spin', 180 + index * 29 + 'deg');
+    piece.style.setProperty('--color', colors[index % colors.length]);
+    piece.style.setProperty('--delay', 470 + (index % 6) * 24 + 'ms');
+    pieces.append(piece);
   }
-}
-
-function updateStory() {
-  if (filmMotion.matches) playAt(-film.getBoundingClientRect().top / stage.clientHeight);
-  const scrollLength = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-  progressLine.style.setProperty('--progress', scrollLength > 0 ? window.scrollY / scrollLength : 0);
-  frame = 0;
-}
-
-function requestProgressUpdate() {
-  if (!frame) frame = requestAnimationFrame(updateStory);
-}
-
-function seek(id, behavior) {
-  const stop = stops.find(item => item.id === id);
-  if (!stop || !filmMotion.matches) return false;
-  cancelSeek();
-  if (behavior !== 'instant') stage.focus({ preventScroll: true });
-  const from = window.scrollY;
-  const to = from + film.getBoundingClientRect().top + stop.time * stage.clientHeight;
-  if (behavior === 'instant') {
-    window.scrollTo({ top: to, behavior });
-    return true;
-  }
-
-  const duration = Math.min(1350, 650 + Math.abs(to - from) * 0.32);
-  const started = performance.now();
-  function advance(now) {
-    const elapsed = now - started;
-    const progress = easeBetween(elapsed, 0, duration);
-    window.scrollTo({ top: from + (to - from) * progress, behavior: 'instant' });
-    seekFrame = elapsed < duration ? requestAnimationFrame(advance) : 0;
-  }
-  seekFrame = requestAnimationFrame(advance);
-  return true;
-}
-
-function cancelSeek() {
-  cancelAnimationFrame(seekFrame);
-  seekFrame = 0;
-}
-
-function configureStory() {
-  document.documentElement.classList.toggle('story-motion', filmMotion.matches);
-  if (!filmMotion.matches) {
-    cancelSeek();
-    scenes.forEach(scene => { scene.inert = false; });
-    nextScene.hidden = true;
-    previousActive = -1;
-  }
-  requestProgressUpdate();
-}
-
-nextScene.addEventListener('click', () => seek(nextScene.dataset.stop, 'smooth'));
-window.addEventListener('wheel', cancelSeek, { passive: true });
-window.addEventListener('touchstart', cancelSeek, { passive: true });
-window.addEventListener('keydown', event => {
-  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) cancelSeek();
-});
-window.addEventListener('scroll', requestProgressUpdate, { passive: true });
-window.addEventListener('resize', requestProgressUpdate);
-window.addEventListener('hashchange', () => seek(location.hash.slice(1), 'instant'));
-filmMotion.addEventListener('change', configureStory);
-configureStory();
-requestAnimationFrame(() => seek(location.hash.slice(1), 'instant'));
+  confetti.append(pieces);
+  window.setTimeout(() => confetti.replaceChildren(), 1900);
+}, { once: true });
 
 const calendarDialog = document.querySelector('.calendar-dialog');
 if (typeof calendarDialog.showModal === 'function') {

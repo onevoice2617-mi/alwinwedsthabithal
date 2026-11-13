@@ -65,15 +65,33 @@ button { cursor: pointer; }
   place-items: center;
   overflow: hidden;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 44%, #fffbf1 10%, #f7ead7 100%);
-  animation: intro-out .65s ease-in-out 2.6s both;
+  animation: intro-out 1s ease-in-out 2.6s both;
 }
-.site-intro.is-ready { animation: intro-out-ready .65s ease-in-out both; }
+.site-intro.is-ready { animation: intro-out-ready 1s ease-in-out both; }
+.intro-curtain {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(50% + 1px);
+  background:
+    linear-gradient(0deg, #a9666435, #fff3e835 42%, #a9666433),
+    repeating-linear-gradient(90deg, #b27d79 0, #c99992 7%, #e8c8ba 12%, #d5a49c 17%, #af7976 21%);
+  box-shadow: inset -8px 0 20px #60363355;
+  animation: curtain-left 1s var(--ease) 2.6s both;
+}
+.intro-curtain-right { inset: 0 0 0 auto; animation-name: curtain-right; box-shadow: inset 8px 0 20px #60363355; }
+.site-intro.is-ready .intro-curtain-left { animation: curtain-left-ready 1s var(--ease) both; }
+.site-intro.is-ready .intro-curtain-right { animation: curtain-right-ready 1s var(--ease) both; }
+.site-intro.is-ready .site-intro-card { animation: intro-card-out .4s ease both; }
 .site-intro-card {
   display: grid;
   justify-items: center;
   gap: .7rem;
-  padding: 1.5rem;
+  position: relative;
+  padding: 1.25rem clamp(1.25rem, 6vw, 2.75rem) 1.75rem;
+  border: 1px solid #e2bfb2;
+  border-radius: 48% 48% .75rem .75rem / 23% 23% .75rem .75rem;
+  background: #fff9ef;
+  box-shadow: 0 10px 40px #6b3e4733;
   text-align: center;
   animation: intro-card-in .76s var(--ease) both;
 }
@@ -89,11 +107,13 @@ button { cursor: pointer; }
 }
 @keyframes intro-card-in { from { opacity: 0; transform: translateY(.7rem) scale(.96); } }
 @keyframes intro-line-in { from { opacity: 0; transform: scaleX(.08); } }
-@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
-@keyframes intro-out-ready { to { opacity: 0; visibility: hidden; } }
-
-.button { justify-self: end; }
-.reading-line { position: absolute; inset: auto 0 -1px; height: 2px; background: var(--clay); transform-origin: left; transform: scaleX(var(--progress, 0)); pointer-events: none; }
+@keyframes intro-out { 72% { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@keyframes intro-out-ready { 72% { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@keyframes curtain-left { to { transform: translateX(-105%); } }
+@keyframes curtain-right { to { transform: translateX(105%); } }
+@keyframes curtain-left-ready { to { transform: translateX(-105%); } }
+@keyframes curtain-right-ready { to { transform: translateX(105%); } }
+@keyframes intro-card-out { to { opacity: 0; transform: scale(.94); } }
 
 .button { display: inline-flex; min-height: 3.25rem; padding: .65rem 1.22rem; gap: .6rem; align-items: center; justify-content: center; border-radius: 100px; border: 1px solid transparent; font-size: .86rem; font-weight: 700; line-height: 1.2; text-decoration: none; transition: background .25s, border-color .25s, color .25s, transform .25s var(--ease); }
 .button-outline { background: transparent; border-color: #aeb7a2; }
@@ -105,13 +125,10 @@ button { cursor: pointer; }
 .faith-mark { display: flex; gap: .8rem; align-items: center; width: fit-content; color: var(--clay); margin-bottom: 1.18rem; }
 .faith-mark::before, .faith-mark::after { content: ""; display: block; width: 1.36rem; height: 1px; background: #c6a18d; }
 .faith-mark .icon { width: 1rem; height: 1rem; stroke-width: 1.35; }
-.blessing { background: #f3eddf; border-block: 1px solid #e9e0d0; text-align: center; }
-.blessing-inner { padding-block: clamp(3.75rem, 7vw, 6rem); }
 .blessing .faith-mark { margin-inline: auto; }
 .blessing blockquote { max-width: 45rem; margin-inline: auto; }
 .blessing blockquote p { font-style: italic; font-size: clamp(2.3rem, 5.2vw, 4.45rem); line-height: 1.02; text-wrap: balance; }
 .blessing cite { display: block; margin-top: 1rem; color: var(--clay); font-size: .75rem; font-style: normal; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-.blessing-rule { width: 3.6rem; height: 1px; background: #d6c5ae; margin: 1.8rem auto; }
 .blessing h2 { font-size: clamp(1.85rem, 3.8vw, 3rem); }
 .closing-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; margin-top: 1.25rem; }
 .share-status { min-height: 1.25rem; margin-top: .5rem; font-size: .85rem; color: var(--muted); }
@@ -136,7 +153,6 @@ dialog::backdrop { background: #27392bbb; }
 :root {
   --frame: clamp(1.15rem, 4.2vw, 4.25rem);
   --shortcut-size: clamp(2.75rem, 5.2vw, 3.5rem);
-  --scene-paper: #fff9ed;
 }
 
 .site-header { position: fixed; inset: 0 0 auto; z-index: 4; pointer-events: none; }
@@ -191,274 +207,460 @@ dialog::backdrop { background: #27392bbb; }
   .quick-actions span { opacity: 0; transform: translateX(.3rem); transition: opacity .2s, transform .2s; pointer-events: none; }
   .quick-actions a:is(:hover, :focus-visible) span { opacity: 1; transform: none; }
 }
-.reading-line {
-  position: fixed;
-  inset: auto 0 0;
-  height: 3px;
-  background: #dc9d76;
-  transform-origin: left;
-  transform: scaleX(var(--progress, 0));
-}
 
-.story-scene { position: relative; background: #e9d7ac; }
-.scene-screen {
+main > section, .venue { scroll-margin-top: 0; }
+.image-section {
   position: relative;
   isolation: isolate;
   display: grid;
-  align-items: end;
+  overflow: clip;
   min-height: 100vh;
   min-height: 100svh;
-  overflow: clip;
+  background: #304435;
+  color: #fff9ed;
 }
-.story-image, .opening-art { position: absolute; z-index: -2; inset: 0; overflow: hidden; }
-.story-image picture { display: block; width: 100%; height: 100%; }
-.story-image img, .opening-art img {
+.opening {
+  place-items: end center;
+  padding: 11rem var(--gutter) max(clamp(1.65rem, 5.4vh, 4.25rem), env(safe-area-inset-bottom));
+}
+.image-section::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(0deg, #17291f 0%, #17291fee 16%, #17291fb8 32%, #17291f4f 52%, transparent 73%);
+  pointer-events: none;
+}
+.opening-copy { text-align: center; }
+.opening-copy .eyebrow, .opening-copy .faith-mark { color: #ffddb7; }
+.opening-copy .faith-mark { margin-inline: auto; margin-bottom: .75rem; }
+.opening h1 {
+  margin: .6rem auto 1rem;
+  font-size: clamp(3.25rem, 7.35vw, 7.5rem);
+  letter-spacing: -.045em;
+  line-height: .95;
+  text-shadow: 0 3px 24px #1322198c;
+}
+.opening h1 i { font-size: .72em; color: #ffddb7; }
+.invitation-copy { max-width: 32rem; margin-inline: auto; color: #fff5e5; }
+.opening-copy .button {
+  margin-top: 1.3rem;
+  border-color: #ffddb7;
+  background: #fff4e1;
+  color: #263b2e;
+}
+.opening-copy .button:hover { background: #ffddb7; }
+.opening-copy .button:focus-visible { outline-color: #ffddb7; }
+.section-art {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+}
+.section-art picture { display: block; width: 100%; height: 100%; }
+.section-art img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--shot-x, 50%) var(--shot-y, 50%);
+  object-position: 50% 45%;
 }
-.opening-art { --shot-y: 42%; }
-.opening .scene-screen::after, .turn .scene-screen::after {
+
+.date-section { place-items: center; padding-block: clamp(4.5rem, 9vh, 7rem); text-align: center; }
+.date-section::after { background: linear-gradient(0deg, #17291ff2, #17291f8c 52%, #17291f29); }
+.date-inner { width: min(100%, 50rem); }
+.date-inner h2 { margin: .45rem 0 .75rem; }
+.date-inner h2 em, .section-heading em, .blessing cite { color: #ffddb7; }
+.date-reveal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 25rem;
+  margin-top: .6rem;
+  isolation: isolate;
+}
+.date-trigger, .date-card { grid-area: 1 / 1; }
+.date-trigger {
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  padding: 1rem .5rem;
+  border: 0;
+  background: transparent;
+  border-radius: .75rem;
+  font-size: .92rem;
+  font-weight: 700;
+}
+.date-trigger > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  border: 1px solid #f5d6b5;
+  border-radius: 100px;
+  background: #fff4e1;
+  color: var(--ink);
+}
+.date-trigger:focus-visible { outline-color: #ffddb7; }
+.envelope {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(15rem, 70vw);
+  aspect-ratio: 1.57;
+  border-radius: .45rem;
+  border: 1px solid #c28f7c;
+  background:
+    linear-gradient(32deg, #f0cbbb 49%, #bc8578 50%, transparent 51%) left bottom / 52% 100% no-repeat,
+    linear-gradient(-32deg, #f0cbbb 49%, #bc8578 50%, transparent 51%) right bottom / 52% 100% no-repeat,
+    #dcb2a1;
+  box-shadow: 0 13px 24px #71463328;
+  perspective: 380px;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.envelope-fold {
+  position: absolute;
+  inset: 0 -1px auto;
+  height: 65%;
+  transform-origin: 50% 0;
+  background: linear-gradient(165deg, #f9dfcf, #dcab9b);
+  clip-path: polygon(0 0, 100% 0, 52% 96%, 48% 96%);
+}
+.wax-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  aspect-ratio: 1;
+  margin-top: 16%;
+  border-radius: 46% 52% 44% 53%;
+  border: 2px solid #e8ac94;
+  outline: 1px solid #8c433a;
+  background: #a65a4b;
+  color: #fff2db;
+  box-shadow: 0 3px 5px #623f4666;
+}
+.wax-seal .icon { width: 1.25rem; height: 1.25rem; }
+.date-trigger:is(:hover, :focus-visible) .envelope {
+  transform: translateY(-.3rem) rotate(-2deg);
+  box-shadow: 0 18px 27px #71463338;
+}
+.date-trigger.is-opening {
+  z-index: 2;
+  pointer-events: none;
+  animation: envelope-away .55s var(--ease) both;
+}
+.is-opening .envelope-fold { animation: envelope-unfold .42s ease both; }
+.is-opening .wax-seal { animation: seal-away .28s ease both; }
+.date-card {
+  position: relative;
+  color: var(--ink);
+  width: min(100%, 26rem);
+  padding: 1.6rem clamp(1rem, 5vw, 2.35rem) 1.2rem;
+  border: 1px solid #d6ae88;
+  border-radius: 48% 48% .55rem .55rem / 15% 15% .55rem .55rem;
+  background: #fffaf0;
+  box-shadow: 0 12px 28px #86614c20;
+}
+.date-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(0deg, #15271dea, #22362877 22%, transparent 53%);
+  inset: .42rem;
+  border: 1px solid #e8d4b6;
+  border-radius: inherit;
   pointer-events: none;
 }
-.opening-copy {
-  color: #fff9ec;
-  text-align: center;
-  padding: 3rem var(--frame) max(2rem, env(safe-area-inset-bottom));
-}
-.opening-copy .eyebrow { color: #fff9ec; }
-.opening-names { font: clamp(4.15rem, 10.8vw, 9.4rem)/.92 var(--display); letter-spacing: -.045em; margin: .38rem 0 1.25rem; text-shadow: 0 2px 22px #15271d75; }
-.opening-names i { color: #ffd6ac; font-weight: 400; }
-.begin-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  gap: .5rem;
-  border: 1px solid #fff9ec80;
-  border-radius: 100px;
-  padding: .5rem .95rem;
-  font-size: .81rem;
-  font-weight: 700;
-  text-decoration: none;
-  background: #15271d80;
-}
-.begin-link:hover { background: var(--green); }
-
-.board-layout { display: grid; justify-items: start; padding: 4.8rem var(--frame) 3rem; }
-.board {
-  position: relative;
-  width: min(100%, 35rem);
-  padding: clamp(1.8rem, 5vw, 3.8rem);
-  text-align: center;
-  background: linear-gradient(135deg, #fff9ec, #f7e8cd);
-  border: .52rem solid #805234;
-  outline: 1px solid #c89e71;
-  outline-offset: -.84rem;
-  border-radius: .38rem;
-  box-shadow: 0 1.25rem 3rem #27190d70;
-}
-.board::before, .board::after {
-  content: "";
+.date-display { display: grid; justify-items: center; gap: .1rem; }
+.date-display:focus-visible { outline: 1px solid #bc866c; outline-offset: .28rem; border-radius: .5rem; }
+.date-display span { font-size: .86rem; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; }
+.date-display strong { font: 6.5rem/.9 var(--display); color: var(--clay); }
+.date-location { color: var(--muted); font-size: .92rem; margin: .6rem 0 1rem; }
+.date-card.just-revealed { animation: date-rise .7s var(--ease) .2s both; }
+.date-confetti { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.date-confetti span {
   position: absolute;
-  top: 100%;
-  height: 9rem;
-  width: .68rem;
-  background: linear-gradient(90deg, #6e472f, #a5784e);
+  top: 46%;
+  left: 50%;
+  width: .47rem;
+  height: .73rem;
+  border-radius: 2px;
+  background: var(--color);
+  animation: date-burst 1.25s var(--ease) var(--delay) both;
 }
-.board::before { left: 12%; }
-.board::after { right: 12%; }
-.board .faith-mark { margin-inline: auto; }
-.board h1 { margin: .65rem auto 1.15rem; font-size: clamp(3.15rem, 7.5vw, 6.25rem); line-height: .85; letter-spacing: -.035em; }
-.board h1 i { display: block; font-size: .61em; color: var(--clay); margin-block: .1em; }
-.invitation-copy { color: #475143; max-width: 23rem; margin-inline: auto; }
-
-.turn { background: #c4a073; }
-.turn-image { --shot-x: 55%; --shot-y: 46%; }
-.turn-first { display: none !important; }
-.turn .story-heading {
-  color: #fff9eb;
-  margin: 0 auto;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-  box-shadow: none;
-  border: 0;
-  padding-bottom: 2.3rem;
-}
-.turn .story-heading .eyebrow { color: #fff9eb; }
-.turn .story-heading em { color: #ffd6ac; }
-.aisle { background: #d8b17f; }
-.aisle-image { --shot-y: 52%; }
-.ceremony { background: #e8c89b; }
-.rings-image { --shot-y: 50%; }
-.reception { background: #b98361; }
-.dinner-image { --shot-x: 49%; }
-.scene-caption {
-  z-index: 1;
-  width: min(25rem, calc(100% - var(--frame) * 2));
-  margin: 4.5rem var(--frame) max(1.35rem, env(safe-area-inset-bottom));
-  padding: clamp(1.1rem, 2.5vw, 1.8rem);
-  background: #fff8ea;
-  border: 1px solid #e1cfad;
-  border-radius: .75rem;
-  box-shadow: 0 1rem 3.25rem #31231540;
-}
-.scene-caption h2 { font-size: clamp(2.65rem, 5.8vw, 4.85rem); margin: .36rem 0 .6rem; line-height: .91; }
-.date-copy time { display: block; }
-.date-copy .button, .ceremony-copy .button, .reception-copy .button { margin-top: .75rem; min-height: 2.75rem; }
-.date-location, .scene-caption address { color: var(--muted); font-style: normal; font-size: .9rem; line-height: 1.45; }
-.venue-name { font-weight: 700; }
-.ceremony-copy, .reception-copy { justify-self: end; }
-.countdown { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: .9rem; text-align: center; border-top: 1px solid #e0d6c3; padding-top: .65rem; }
+.date-confetti span:nth-child(3n) { border-radius: 50%; width: .5rem; height: .5rem; }
+.countdown { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 1.1rem; border-top: 1px solid #e8d9c3; padding-top: .7rem; }
 .countdown strong { display: block; font: 1.65rem/1 var(--display); font-variant-numeric: tabular-nums; }
-.countdown span { font-size: .58rem; letter-spacing: .08em; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+.countdown span { font-size: .56rem; letter-spacing: .065em; font-weight: 700; text-transform: uppercase; color: var(--muted); }
 .countdown-finished { grid-column: 1 / -1; font: 1.4rem/1.15 var(--display); }
+@keyframes envelope-unfold { to { transform: rotateX(170deg); } }
+@keyframes seal-away { to { opacity: 0; transform: scale(.7); } }
+@keyframes envelope-away { 42% { opacity: 1; } to { opacity: 0; transform: translateY(1.4rem) scale(.92); } }
+@keyframes date-rise { from { opacity: 0; transform: translateY(1.25rem) scale(.97); } }
+@keyframes date-burst {
+  from { opacity: 0; transform: scale(.2); }
+  14% { opacity: 1; }
+  to { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--spin)); }
+}
+
+.arrival { place-items: end center; text-align: center; }
+.arrival-art img { object-position: 61% 42%; }
+.arrival-first-frame { position: absolute; inset: 0; opacity: 0; }
+.church-approach, .dinner-service { display: none; }
+.section-heading { padding-block: clamp(3rem, 9vh, 7rem); }
+.section-heading .eyebrow { color: #ffddb7; margin-bottom: .65rem; }
+.venue {
+  align-items: end;
+  justify-items: end;
+  padding: 5rem var(--frame) clamp(1.6rem, 6vh, 4.5rem);
+}
+.venue::after { background: linear-gradient(0deg, #17291fe0, #17291f38 50%, transparent 74%); }
+.venue-photo img { transition: transform .65s var(--ease); }
+.venue-copy {
+  width: min(100%, 26rem);
+  padding: clamp(1rem, 3vw, 2.1rem);
+  border: 1px solid #ead4b4;
+  border-radius: .85rem;
+  background: #fff8ec;
+  color: var(--ink);
+  box-shadow: 0 10px 32px #21170d35;
+}
+.venue-copy .button { background: #fff9ed; }
+.venue-copy .button:hover { background: #f4e8d5; }
+.venue-timezone { margin-top: .65rem; color: var(--muted); font-size: .78rem; }
+.venue-meta { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .8rem; }
+.venue-meta time { padding: .33rem .7rem; border-radius: 100px; background: #f4e5d9; color: #784735; font-size: .78rem; font-weight: 700; }
+.venue-icon { display: grid; place-items: center; width: 2.75rem; aspect-ratio: 1; border-radius: 50%; background: #e8ead8; color: var(--green); transition: transform .35s var(--ease); }
+.venue-icon .icon { width: 1.35rem; height: 1.35rem; }
+.venue h3 { font-size: clamp(2.2rem, 4.4vw, 3.65rem); }
+.venue-name { margin-top: .65rem; font-weight: 700; }
+.venue address { margin-bottom: 1rem; color: var(--muted); font-style: normal; font-size: .92rem; }
+.venue .button { min-height: 2.8rem; }
+.venue .button:is(:hover, :focus-visible) .trailing { transform: translate(3px, -3px); }
+.venue:focus-within .venue-photo img { transform: scale(1.025); }
+.venue-copy:is(:hover, :focus-within) .venue-icon { transform: rotate(-9deg); }
+@media (hover: hover) {
+  .venue:has(.venue-copy:hover) .venue-photo img { transform: scale(1.025); }
+}
+.blessing { place-items: center; text-align: center; }
+.blessing-art { background: url("assets/church-garden.webp") center 45% / cover; }
+.blessing::after { background: linear-gradient(0deg, #17291ff2, #17291fc7 49%, #17291f8c); }
+.blessing-inner { padding-block: clamp(4rem, 9vw, 7rem); }
+.blessing .faith-mark { color: #ffddb7; }
+.blessing .button-outline { background: #fff4e1; color: var(--ink); }
+.blessing .button-outline:hover { background: #ffddb7; }
+.blessing .button-primary { border-color: #aeb7a2; }
 .blessing h2 { margin-top: 1.45rem; }
 .back-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .84rem; font-weight: 700; text-decoration: none; }
 .back-link:hover { text-decoration: underline; }
-.site-footer { gap: .5rem; }
-.site-footer > p { text-align: center; color: var(--muted); font-size: .75rem; }
 
-.film-light { display: none; }
-.film-stage .blessing .scene-screen { align-items: center; }
-.film-next {
-  position: absolute;
-  z-index: 10;
-  inset: auto auto max(.5rem, env(safe-area-inset-bottom)) 50%;
-  transform: translateX(-50%);
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid #d2c6a7;
-  border-radius: 50%;
-  background: #fff9ed;
-  box-shadow: 0 3px 16px #2f231a35;
-}
-.film-next:hover { color: var(--paper); background: var(--green); }
-.film-next span { display: none; }
-.film-next[data-stop="invitation"] {
-  display: inline-flex;
-  gap: .55rem;
-  width: auto;
-  border-radius: 100px;
-  padding-inline: 1rem;
-  inset-block-end: max(1.65rem, env(safe-area-inset-bottom));
-  font-size: .81rem;
-  font-weight: 700;
-}
-.film-next[data-stop="invitation"] span { display: inline; }
+@media (prefers-reduced-motion: no-preference) {
+  .opening.scene-entered .opening-art img { animation: church-settle 2.3s var(--ease) both; }
+  .opening.scene-entered .faith-mark::before,
+  .opening.scene-entered .faith-mark::after { animation: trace-rule .9s var(--ease) both; }
+  .opening.scene-entered h1 { animation: names-enter .95s var(--ease) both; }
 
-@media (prefers-reduced-motion: no-preference) and (min-height: 540px) {
-  .story-motion .film { position: relative; min-height: calc((1 + var(--film-duration, 5.6)) * 100svh); }
-  .story-motion .film-stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    isolation: isolate;
-    overflow: clip;
-    background: #eed8ad;
-  }
-  .story-motion .story-scene {
+  .date-section.scene-entered .wax-seal::after {
+    content: "";
     position: absolute;
-    inset: 0;
-    opacity: var(--mix, 0);
-    visibility: var(--shot-visibility, hidden);
-    pointer-events: none;
+    inset: 2px;
+    border-radius: inherit;
+    background: linear-gradient(115deg, transparent 30%, #ffedb9b0 49%, transparent 66%) 100% 0 / 230% 100%;
+    animation: wax-shine 1.4s ease .35s both;
   }
-  .story-motion .opening { --mix: 1; --shot-visibility: visible; }
-  .story-motion .story-scene:not([inert]) { pointer-events: auto; }
-  .story-motion .scene-screen { min-height: 100%; height: 100%; }
-  .story-motion .story-image img, .story-motion .opening-art img {
-    transform: translate3d(calc(var(--scene-progress, 0) * var(--pan, 0%)), 0, 0)
-      scale(calc(1.005 + var(--scene-progress, 0) * var(--zoom, .13) + var(--push, 0)));
-    transform-origin: var(--origin, 50% 50%);
-  }
-  .story-motion .opening-copy {
-    grid-area: 1 / 1;
-    padding-bottom: max(4.4rem, calc(env(safe-area-inset-bottom) + 3.75rem));
-    opacity: var(--title-opacity, 1);
-    transform: translateY(calc((1 - var(--title-opacity, 1)) * .9rem));
-  }
-  .story-motion .begin-link { display: none; }
-  .story-motion .board-layout {
-    grid-area: 1 / 1;
-    align-self: center;
-    opacity: var(--board-opacity, 0);
-    transform: translate3d(calc((1 - var(--board-enter, 0)) * -9vw), calc(var(--board-exit, 0) * 2rem), 0);
-  }
-  .story-motion .board { transform: rotate(calc(-3deg + var(--board-enter, 0) * 2deg)); }
-  .story-motion .opening .scene-screen::after { opacity: var(--title-opacity, 1); }
-  .opening-art { --zoom: .35; --origin: 50% 41%; }
-  .turn-image { --zoom: .20; --pan: -3%; --origin: 62% 46%; }
-  .story-motion .turn-first {
-    display: block !important;
-    position: absolute;
-    inset: 0;
-    opacity: clamp(0, calc(2 - 3.5 * var(--scene-progress)), 1);
-  }
-  .aisle-image { --zoom: .29; --origin: 51% 42%; }
-  .rings-image { --zoom: .14; --origin: 40% 62%; }
-  .dinner-image { --zoom: .11; --origin: 52% 53%; }
-  .story-motion .scene-caption, .story-motion .blessing-inner {
-    opacity: var(--caption, 1);
-    transform: translate3d(0, calc((1 - var(--caption, 1)) * 1.15rem), 0);
-  }
-  .story-motion .scene-caption { margin-bottom: max(3.65rem, calc(env(safe-area-inset-bottom) + 3.25rem)); }
-  .story-motion .film-light {
+  .date-card.just-revealed .date-display strong { animation: date-stamp .68s var(--ease) .33s both; }
+
+  .arrival.scene-entered .arrival-first-frame { animation: bride-approach 1.65s ease-in-out both; }
+  .arrival.scene-entered .section-heading { animation: caption-enter 1.1s var(--ease) .35s both; }
+
+  #ceremony.scene-entered .church-approach {
     display: block;
     position: absolute;
-    z-index: 9;
     inset: 0;
-    pointer-events: none;
-    opacity: var(--light, 0);
-    background: radial-gradient(ellipse at var(--light-origin, 50% 48%), #fff3d4, #fbd0a870 47%, transparent 76%);
+    container-type: size;
+    background: #dbc5a0;
+    animation: church-dissolve 3.85s ease both;
   }
+  #ceremony.scene-entered::after { animation: ceremony-shade 3.85s ease both; }
+  #ceremony .church-approach-art {
+    position: absolute;
+    inset: 0;
+    object-position: center bottom;
+  }
+  #ceremony.scene-entered .wedding-car {
+    position: absolute;
+    left: 50%;
+    /* Track the illustrated path in image coordinates through the cover crop. */
+    --church-image-height: max(100cqh, 66.667cqw);
+    --path-start: calc(100% - .055 * var(--church-image-height));
+    --path-end: calc(100% - .352 * var(--church-image-height));
+    top: var(--path-end);
+    width: min(64cqw, 42cqh, 30rem);
+    transform-origin: 50% 100%;
+    animation: car-drive 2.85s cubic-bezier(.38, .16, .52, 1) both;
+  }
+  #ceremony .wedding-car::before {
+    content: "";
+    position: absolute;
+    inset: auto 9% 1%;
+    height: 9%;
+    border-radius: 50%;
+    background: #382a2090;
+    filter: blur(.3rem);
+  }
+  #ceremony .wedding-car img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  #reception.scene-entered .dinner-service {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    left: clamp(1.5rem, 12vw, 13rem);
+    bottom: 17%;
+    width: clamp(16rem, 43vw, 35rem);
+    aspect-ratio: 1.75;
+    pointer-events: none;
+    animation: service-fade 3.25s ease both;
+  }
+  .dinner-service::before {
+    content: "";
+    position: absolute;
+    inset: -65% -14% -16%;
+    background: radial-gradient(ellipse at 49% 69%, #432818bb, transparent 69%);
+  }
+  .dinner-platter, .dinner-dome {
+    position: absolute;
+    height: auto;
+    filter: drop-shadow(0 .65rem .8rem #261b177d);
+  }
+  .dinner-platter { width: 100%; left: 0; bottom: 0; }
+  .dinner-dome {
+    z-index: 2;
+    width: 96%;
+    left: 2%;
+    bottom: 21%;
+    transform-origin: 70% 75%;
+    animation: lift-dome 2.65s var(--ease) both;
+  }
+  .dinner-steam {
+    position: absolute;
+    z-index: 1;
+    left: 30%;
+    right: 30%;
+    bottom: 25%;
+    height: 35%;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .dinner-steam span {
+    width: 13%;
+    border-radius: 50%;
+    background: linear-gradient(0deg, #fff3dbaa, #fff3db00);
+    filter: blur(4px);
+    animation: dinner-steam 1.35s ease-out .8s both;
+  }
+  .dinner-steam span:nth-child(2) { animation-delay: 1s; }
+  .dinner-steam span:nth-child(3) { animation-delay: 1.16s; }
+
+  #ceremony.scene-entered .venue-copy { animation: venue-arrival .85s var(--ease) 3.06s both; }
+  #reception.scene-entered .venue-copy { animation: venue-arrival .85s var(--ease) 1.38s both; }
+  .venue.scene-entered:focus-within .venue-copy { animation: none !important; }
+  #ceremony.scene-entered:focus-within::after { animation: none; }
+  .venue.scene-entered:focus-within .church-approach,
+  .venue.scene-entered:focus-within .dinner-service { visibility: hidden; }
+
+  .blessing.scene-entered .faith-mark .icon { animation: cross-light 1.55s ease both; }
+  .blessing.scene-entered blockquote { animation: caption-enter 1.3s var(--ease) .16s both; }
+  .blessing.scene-entered .faith-mark::before,
+  .blessing.scene-entered .faith-mark::after { animation: trace-rule 1.1s var(--ease) both; }
+}
+
+@keyframes church-settle { from { transform: scale(1.045); } }
+@keyframes trace-rule { from { transform: scaleX(.05); opacity: .35; } }
+@keyframes names-enter { from { opacity: .45; transform: translateY(.45rem); } }
+@keyframes wax-shine { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@keyframes date-stamp {
+  0% { transform: scale(.87); }
+  54% { transform: scale(1.09); }
+  100% { transform: scale(1); }
+}
+@keyframes bride-approach {
+  0%, 20% { opacity: 1; }
+  84%, 100% { opacity: 0; }
+}
+@keyframes caption-enter { from { opacity: .45; transform: translateY(.7rem); } }
+@keyframes car-drive {
+  from { top: var(--path-start); transform: translate(-50%, -100%) scale(1); }
+  to { top: var(--path-end); transform: translate(-50%, -100%) scale(.43); }
+}
+@keyframes church-dissolve {
+  0%, 79% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@keyframes ceremony-shade {
+  0%, 79% { opacity: .23; }
+  100% { opacity: 1; }
+}
+@keyframes lift-dome {
+  0%, 21% { transform: none; opacity: 1; }
+  50% { transform: translate(5%, -67%) rotate(11deg); opacity: 1; }
+  80%, 100% { transform: translate(33%, -95%) rotate(18deg); opacity: 0; }
+}
+@keyframes dinner-steam {
+  from { transform: translateY(22%) scaleX(.65); opacity: 0; }
+  38% { opacity: .78; }
+  to { transform: translateY(-78%) scaleX(1.6); opacity: 0; }
+}
+@keyframes service-fade {
+  0%, 61% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@keyframes venue-arrival {
+  from { opacity: 0; transform: translateY(1.7rem) scale(.985); }
+}
+@keyframes cross-light {
+  0%, 100% { filter: none; }
+  45% { filter: drop-shadow(0 0 .45rem #ffda88) brightness(1.25); }
 }
 
 @media (max-width: 680px) {
-  .site-header .monogram { width: 3rem; height: 3rem; }
+  .site-header .monogram { width: 2.75rem; height: 2.75rem; }
   .quick-actions { gap: .45rem; }
-  .quick-actions span { font-size: .66rem; }
-  .opening-copy { padding-bottom: 2.65rem; }
-  .opening-names { font-size: clamp(3.7rem, 13vw, 6.1rem); }
-  .opening-art { --shot-y: 46%; }
-  .board-layout { justify-items: center; padding-top: 9.5rem; }
-  .board { width: min(100%, 25rem); }
-  .turn-image { --shot-x: 63%; --zoom: .18; --pan: -3%; }
-  .rings-image { --shot-x: 49%; --shot-y: 53%; }
-  .rings-image { bottom: 14%; }
-  .rings-image::after {
-    content: "";
-    position: absolute;
-    inset: 75% 0 0;
-    background: linear-gradient(transparent, #e8c89b);
+  .quick-actions span { display: none; }
+  .opening-copy { max-width: 27rem; }
+  .opening h1 { font-size: clamp(3.35rem, 11vw, 5.6rem); }
+  .opening h1 i { display: block; margin: .05em 0 .09em; font-size: .6em; }
+  .venue { justify-items: center; }
+  .venue-photo img { object-position: 50% 42%; }
+  .date-reveal { min-height: 23rem; }
+}
+@media (max-aspect-ratio: 1/1) {
+  #ceremony .venue-photo {
+    background: url("assets/alwin-ring-exchange.webp") center bottom / cover;
   }
-  .ceremony-copy .faith-mark { display: none; }
-  .scene-caption { margin-top: 8.5rem; }
-  .turn .story-heading { padding-bottom: 2.2rem; }
+  #ceremony .venue-photo picture {
+    height: 76%;
+    mask-image: linear-gradient(#000 84%, transparent);
+  }
+  #ceremony .venue-photo img { object-position: 50% 10%; }
+
 }
 
 @media (max-width: 680px) and (prefers-reduced-motion: no-preference) {
-  .story-motion .turn-image { --shot-x: clamp(30%, calc(27% + 65% * var(--scene-progress)), 64%); }
+  #reception.scene-entered .dinner-service {
+    left: 50%;
+    bottom: auto;
+    top: 31%;
+    width: min(70vw, 21rem);
+    transform: translateX(-50%);
+  }
 }
 
-.reveal-pending:not(:focus-within) { opacity: 0; transform: translateY(1.1rem); }
-.reveal { transition: opacity .65s var(--ease), transform .65s var(--ease); }
-.countdown .tick { animation: tick .35s var(--ease) both; }
-@keyframes tick { from { opacity: .55; transform: translateY(.1em); } }
 @keyframes open-dialog { from { opacity: 0; transform: translateY(.8rem) scale(.98); } }
-
 @media (prefers-reduced-motion: reduce) {
   .site-intro { display: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  .reveal-pending:not(:focus-within) { opacity: 1; transform: none; }
 }

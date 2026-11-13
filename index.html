@@ -10,11 +10,13 @@
   <title>Alwin &amp; Thabithal | Wedding Invitation</title>
   <link rel="icon" href="assets/heart-monogram.svg" type="image/svg+xml">
   <link rel="preload" href="assets/church-garden.webp" as="image">
-  <link rel="stylesheet" href="styles.css?v=film-4">
-  <script src="invite.js?v=film-4" defer></script>
+  <link rel="stylesheet" href="styles.css?v=invitation-9">
+  <script src="invite.js?v=invitation-8" defer></script>
 </head>
 <body id="top">
   <div class="site-intro" aria-hidden="true">
+    <div class="intro-curtain intro-curtain-left"></div>
+    <div class="intro-curtain intro-curtain-right"></div>
     <div class="site-intro-card">
       <img src="assets/heart-monogram.svg" width="112" height="112" alt="">
       <p>Alwin <i>&amp;</i> Thabithal</p>
@@ -32,6 +34,7 @@
     <symbol id="icon-dinner" viewBox="0 0 24 24"><path d="M4 3v5a3 3 0 0 0 6 0V3M7 3v18m12 0V3c-2.3 1.1-4 4.1-4 7v3h4"/></symbol>
     <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4m-6.8 7 6.8 4"/></symbol>
     <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.2 1-1.1a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
   </svg>
   <header class="site-header">
     <a class="monogram" href="#top" aria-label="Alwin and Thabithal, back to top"><img src="assets/heart-monogram.svg" width="56" height="56" alt=""></a>
@@ -46,129 +49,134 @@
         <svg class="icon" aria-hidden="true"><use href="#icon-dinner"/></svg><span aria-hidden="true">Dinner location</span>
       </a>
     </nav>
-    <div class="reading-line" aria-hidden="true"></div>
   </header>
 
   <main id="main">
-    <div class="film">
-      <div class="film-stage" tabindex="-1" aria-label="Wedding story">
-        <section class="opening story-scene" data-scene="opening" aria-labelledby="names">
-          <div class="scene-screen">
-            <div class="opening-art">
-              <img src="assets/church-garden.webp" width="1440" height="960" fetchpriority="high" alt="An ivory church with open doors at the end of a flower-lined garden path">
-            </div>
-            <div class="opening-copy">
-              <p class="eyebrow">The wedding of</p>
-              <p class="opening-names">Alwin <i>&amp;</i> Thabithal</p>
-              <a class="begin-link" href="#invitation"><span>View invitation</span><svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
-            </div>
-            <div class="board-layout" id="invitation">
-              <div class="board">
-                <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>
-                <p class="eyebrow">Together with their families</p>
-                <h1 id="names">Alwin D Raja <i>&amp;</i> T. Thabithal</h1>
-                <p class="invitation-copy">With grateful hearts, we invite you to witness our marriage and celebrate with us.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="turn story-scene" data-scene="turn" id="arrival" aria-labelledby="arrival-heading">
-          <div class="scene-screen">
-            <div class="story-heading scene-caption">
-              <p class="eyebrow">From the church doorway</p>
-              <h2 id="arrival-heading">Here comes <em>the bride</em></h2>
-            </div>
-            <figure class="story-image turn-image">
-              <img class="turn-final" src="assets/groom-turns.webp" width="1440" height="960" decoding="async" alt="Alwin turns to look down the garden path as Thabithal approaches with her bouquet">
-              <img class="turn-first" src="assets/bride-approaches.webp" width="1440" height="960" decoding="async" alt="">
-            </figure>
-          </div>
-        </section>
-
-        <section class="aisle story-scene" data-scene="aisle" id="details" aria-labelledby="date-heading">
-          <div class="scene-screen">
-            <figure class="story-image aisle-image">
-              <img src="assets/bride-view.webp" width="1440" height="960" decoding="async" alt="From Thabithal’s point of view, the church doors open onto an aisle lined with guests, with Alwin waiting at the altar">
-            </figure>
-            <div class="date-copy scene-caption">
-              <p class="eyebrow">Through the bride’s eyes</p>
-              <h2 id="date-heading">Thursday, <time datetime="2026-12-10">10 December <em>2026</em></time></h2>
-              <p class="date-location">Vellore, Tamil Nadu</p>
-              <a class="button button-primary" href="wedding.ics" download data-calendar><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Save the date</a>
-              <div class="countdown" role="timer" aria-label="Time until the wedding" data-start="2026-12-10T16:00:00+05:30" hidden>
-                <div><strong data-unit="days">–</strong><span>Days</span></div>
-                <div><strong data-unit="hours">–</strong><span>Hours</span></div>
-                <div><strong data-unit="minutes">–</strong><span>Minutes</span></div>
-                <div><strong data-unit="seconds">–</strong><span>Seconds</span></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="ceremony story-scene" data-scene="ceremony" id="ceremony" aria-labelledby="ceremony-heading">
-          <div class="scene-screen">
-            <figure class="story-image rings-image">
-              <picture>
-                <source media="(min-aspect-ratio: 1/1)" srcset="assets/ring-exchange-wide.webp">
-                <img src="assets/alwin-ring-exchange.webp" width="1000" height="1250" decoding="async" alt="Storybook illustration of Alwin placing a gold wedding ring on Thabithal’s finger">
-              </picture>
-            </figure>
-            <div class="ceremony-copy scene-caption">
-              <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>
-              <p class="eyebrow"><time datetime="2026-12-10T16:00:00+05:30">4:00 p.m.</time> · Wedding ceremony</p>
-              <h2 id="ceremony-heading">With this <em>ring</em></h2>
-              <p class="venue-name">CSI Central Church</p>
-              <address>Anna Salai, Vellore – 632004</address>
-              <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=CSI%20Central%20Church%2C%20Anna%20Salai%2C%20Vellore%20632004" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Church directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section class="reception story-scene" data-scene="reception" id="venues" aria-labelledby="reception-heading">
-          <div class="scene-screen">
-            <figure class="story-image dinner-image">
-              <img src="assets/reception-dinner.webp" width="1440" height="960" decoding="async" alt="Friends and family sharing dinner at a candlelit wedding reception">
-            </figure>
-            <div class="reception-copy scene-caption">
-              <p class="eyebrow"><time id="reception-time" datetime="2026-12-10T19:00:00+05:30">7:00 p.m.</time> · Reception</p>
-              <h2 id="reception-heading">Join us <em>for dinner</em></h2>
-              <p class="venue-name">Don Bosco A/C Auditorium</p>
-              <address>Near E.B. Bus Stop, Gandhi Nagar,<br>Katpadi – 632006</address>
-              <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=Don%20Bosco%20Auditorium%2C%20Gandhi%20Nagar%2C%20Katpadi%20632006" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Dinner directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section class="blessing story-scene" data-scene="blessing" id="closing" aria-labelledby="blessing-heading">
-          <div class="scene-screen">
-            <div class="wrap blessing-inner">
-              <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>
-              <blockquote>
-                <p>“What therefore God hath joined together, let not man put asunder.”</p>
-                <cite>Mark 10:9</cite>
-              </blockquote>
-              <h2 id="blessing-heading">We look forward to seeing you.</h2>
-              <div class="closing-actions">
-                <a class="button button-primary" href="wedding.ics" download data-calendar><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Add to calendar</a>
-                <button class="button button-outline" type="button" data-share hidden><svg class="icon" aria-hidden="true"><use href="#icon-share"/></svg> Share invitation</button>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div class="film-light" aria-hidden="true"></div>
-        <button class="film-next" type="button" hidden><span>Scroll to begin</span><svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></button>
+    <section class="opening image-section" id="invitation" aria-labelledby="names">
+      <div class="opening-copy">
+        <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>
+        <p class="eyebrow">Together with their families</p>
+        <h1 id="names">Alwin D Raja <i>&amp;</i> T. Thabithal</h1>
+        <p class="invitation-copy">With grateful hearts, we invite you to witness our marriage and celebrate with us.</p>
+        <a class="button button-primary" href="#details">Find out the wedding date <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
       </div>
-    </div>
+      <figure class="opening-art section-art">
+        <img src="assets/church-garden.webp" width="1440" height="960" fetchpriority="high" alt="An ivory church at the end of a garden path lined with flowers">
+      </figure>
+    </section>
+
+    <section class="date-section image-section" id="details" aria-labelledby="date-heading">
+      <figure class="section-art date-art">
+        <img src="assets/bride-view.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Thabithal’s view down the church aisle with Alwin waiting at the altar">
+      </figure>
+      <div class="wrap date-inner">
+        <h2 id="date-heading">Save <em>the date</em></h2>
+        <div class="date-reveal">
+          <button class="date-trigger" type="button" aria-controls="wedding-date" hidden>
+            <span class="envelope" aria-hidden="true">
+              <span class="envelope-fold"></span>
+              <span class="wax-seal"><svg class="icon"><use href="#icon-heart"/></svg></span>
+            </span>
+            <span>Open the envelope <svg class="icon" aria-hidden="true"><use href="#icon-up-right"/></svg></span>
+          </button>
+          <div class="date-card" id="wedding-date">
+            <time datetime="2026-12-10" class="date-display" tabindex="-1"><span>Thursday</span><strong>10</strong><span>December 2026</span></time>
+            <p class="date-location">Vellore, Tamil Nadu</p>
+            <a class="button button-primary" href="wedding.ics" download data-calendar><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Add to calendar</a>
+            <div class="countdown" role="timer" aria-label="Time until the wedding" data-start="2026-12-10T16:00:00+05:30" hidden>
+              <div><strong data-unit="days">–</strong><span>Days</span></div>
+              <div><strong data-unit="hours">–</strong><span>Hours</span></div>
+              <div><strong data-unit="minutes">–</strong><span>Minutes</span></div>
+              <div><strong data-unit="seconds">–</strong><span>Seconds</span></div>
+            </div>
+          </div>
+          <div class="date-confetti" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="arrival image-section" id="arrival" aria-labelledby="arrival-heading">
+      <figure class="section-art arrival-art">
+        <img src="assets/groom-turns.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Alwin turns to watch Thabithal approach with her bouquet">
+        <img class="arrival-first-frame" src="assets/bride-approaches.webp" width="1440" height="960" loading="lazy" decoding="async" alt="">
+      </figure>
+      <div class="wrap section-heading">
+        <p class="eyebrow">From the church doorway</p>
+        <h2 id="arrival-heading">Here comes <em>the bride</em></h2>
+      </div>
+    </section>
+
+    <section class="venues" id="venues" aria-label="The wedding day">
+      <article class="venue image-section" id="ceremony" aria-labelledby="ceremony-heading">
+        <figure class="section-art venue-photo">
+          <picture>
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/alwin-ring-exchange.webp">
+            <img src="assets/ring-exchange-wide.webp" width="1600" height="900" loading="lazy" decoding="async" alt="Alwin places a gold wedding ring on Thabithal’s finger">
+          </picture>
+          <div class="church-approach" aria-hidden="true">
+            <img class="church-approach-art" src="assets/church-garden.webp" width="1440" height="960" loading="lazy" alt="">
+            <div class="wedding-car">
+              <img src="assets/wedding-car.webp" width="720" height="658" decoding="async" alt="">
+            </div>
+          </div>
+        </figure>
+        <div class="venue-copy">
+          <div class="venue-meta">
+            <span class="venue-icon"><svg class="icon" aria-hidden="true"><use href="#icon-church"/></svg></span>
+            <time datetime="2026-12-10T16:00:00+05:30">4:00 p.m.</time>
+          </div>
+          <h3 id="ceremony-heading">Wedding ceremony</h3>
+          <p class="venue-name">CSI Central Church</p>
+          <address>Anna Salai, Vellore – 632004</address>
+          <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=CSI%20Central%20Church%2C%20Anna%20Salai%2C%20Vellore%20632004" target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Church directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
+          </a>
+          <p class="venue-timezone">All times are in Indian Standard Time.</p>
+        </div>
+      </article>
+      <article class="venue image-section" id="reception" aria-labelledby="reception-heading">
+        <figure class="section-art venue-photo">
+          <img src="assets/reception-dinner.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Friends and family sharing dinner at a candlelit wedding reception">
+        </figure>
+        <div class="dinner-service" aria-hidden="true">
+          <img class="dinner-platter" src="assets/dinner-platter.webp" width="1000" height="500" decoding="async" alt="">
+          <img class="dinner-dome" src="assets/dinner-dome.webp" width="1000" height="500" decoding="async" alt="">
+          <div class="dinner-steam"><span></span><span></span><span></span></div>
+        </div>
+        <div class="venue-copy">
+          <div class="venue-meta">
+            <span class="venue-icon"><svg class="icon" aria-hidden="true"><use href="#icon-dinner"/></svg></span>
+            <time id="reception-time" datetime="2026-12-10T19:00:00+05:30">7:00 p.m.</time>
+          </div>
+          <h3 id="reception-heading">Dinner reception</h3>
+          <p class="venue-name">Don Bosco A/C Auditorium</p>
+          <address>Near E.B. Bus Stop, Gandhi Nagar, Katpadi – 632006</address>
+          <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=Don%20Bosco%20Auditorium%2C%20Gandhi%20Nagar%2C%20Katpadi%20632006" target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Dinner directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <section class="blessing image-section" id="closing" aria-labelledby="blessing-heading">
+      <div class="section-art blessing-art" aria-hidden="true"></div>
+      <div class="wrap blessing-inner">
+        <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>
+        <blockquote>
+          <p>“What therefore God hath joined together, let not man put asunder.”</p>
+          <cite>Mark 10:9</cite>
+        </blockquote>
+        <h2 id="blessing-heading">We look forward to seeing you.</h2>
+        <div class="closing-actions">
+          <a class="button button-primary" href="wedding.ics" download data-calendar><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Add to calendar</a>
+          <button class="button button-outline" type="button" data-share hidden><svg class="icon" aria-hidden="true"><use href="#icon-share"/></svg> Share invitation</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="wrap site-footer">
     <a class="monogram" href="#top" aria-label="Alwin and Thabithal, back to top"><img src="assets/heart-monogram.svg" width="54" height="54" alt=""></a>
-    <p>All times are in Indian Standard Time.</p>
     <a class="back-link" href="#top">Back to top <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
   </footer>
 
