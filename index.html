@@ -10,8 +10,8 @@
   <title>Alwin &amp; Thabithal | Wedding Invitation</title>
   <link rel="icon" href="assets/heart-monogram.svg" type="image/svg+xml">
   <link rel="preload" href="assets/church-garden.webp" as="image">
-  <link rel="stylesheet" href="styles.css?v=invitation-9">
-  <script src="invite.js?v=invitation-8" defer></script>
+  <link rel="stylesheet" href="styles.css?v=invitation-11">
+  <script src="invite.js?v=invitation-11" defer></script>
 </head>
 <body id="top">
   <div class="site-intro" aria-hidden="true">
@@ -58,14 +58,14 @@
         <p class="eyebrow">Together with their families</p>
         <h1 id="names">Alwin D Raja <i>&amp;</i> T. Thabithal</h1>
         <p class="invitation-copy">With grateful hearts, we invite you to witness our marriage and celebrate with us.</p>
-        <a class="button button-primary" href="#details">Find out the wedding date <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
+        <a class="button section-next" href="#details" aria-label="Scroll or tap for next: Save the date">Scroll or tap for next <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
       </div>
       <figure class="opening-art section-art">
         <img src="assets/church-garden.webp" width="1440" height="960" fetchpriority="high" alt="An ivory church at the end of a garden path lined with flowers">
       </figure>
     </section>
 
-    <section class="date-section image-section" id="details" aria-labelledby="date-heading">
+    <section class="date-section image-section" id="details" aria-labelledby="date-heading" tabindex="-1">
       <figure class="section-art date-art">
         <img src="assets/bride-view.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Thabithal’s view down the church aisle with Alwin waiting at the altar">
       </figure>
@@ -92,10 +92,11 @@
           </div>
           <div class="date-confetti" aria-hidden="true"></div>
         </div>
+        <a class="button section-next" href="#arrival" aria-label="Scroll or tap for next: The bride’s arrival">Scroll or tap for next <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
       </div>
     </section>
 
-    <section class="arrival image-section" id="arrival" aria-labelledby="arrival-heading">
+    <section class="arrival image-section" id="arrival" aria-labelledby="arrival-heading" tabindex="-1">
       <figure class="section-art arrival-art">
         <img src="assets/groom-turns.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Alwin turns to watch Thabithal approach with her bouquet">
         <img class="arrival-first-frame" src="assets/bride-approaches.webp" width="1440" height="960" loading="lazy" decoding="async" alt="">
@@ -103,11 +104,12 @@
       <div class="wrap section-heading">
         <p class="eyebrow">From the church doorway</p>
         <h2 id="arrival-heading">Here comes <em>the bride</em></h2>
+        <a class="button section-next" href="#ceremony" aria-label="Scroll or tap for next: Wedding ceremony">Scroll or tap for next <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
       </div>
     </section>
 
     <section class="venues" id="venues" aria-label="The wedding day">
-      <article class="venue image-section" id="ceremony" aria-labelledby="ceremony-heading">
+      <article class="venue image-section" id="ceremony" aria-labelledby="ceremony-heading" tabindex="-1">
         <figure class="section-art venue-photo">
           <picture>
             <source media="(max-aspect-ratio: 1/1)" srcset="assets/alwin-ring-exchange.webp">
@@ -128,13 +130,16 @@
           <h3 id="ceremony-heading">Wedding ceremony</h3>
           <p class="venue-name">CSI Central Church</p>
           <address>Anna Salai, Vellore – 632004</address>
-          <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=CSI%20Central%20Church%2C%20Anna%20Salai%2C%20Vellore%20632004" target="_blank" rel="noopener">
-            <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Church directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
-          </a>
+          <div class="venue-actions">
+            <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=CSI%20Central%20Church%2C%20Anna%20Salai%2C%20Vellore%20632004" target="_blank" rel="noopener">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Church directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
+            </a>
+            <a class="button section-next" href="#reception" aria-label="Scroll or tap for next: Dinner reception">Scroll or tap for next <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
+          </div>
           <p class="venue-timezone">All times are in Indian Standard Time.</p>
         </div>
       </article>
-      <article class="venue image-section" id="reception" aria-labelledby="reception-heading">
+      <article class="venue image-section" id="reception" aria-labelledby="reception-heading" tabindex="-1">
         <figure class="section-art venue-photo">
           <img src="assets/reception-dinner.webp" width="1440" height="960" loading="lazy" decoding="async" alt="Friends and family sharing dinner at a candlelit wedding reception">
         </figure>
@@ -151,14 +156,17 @@
           <h3 id="reception-heading">Dinner reception</h3>
           <p class="venue-name">Don Bosco A/C Auditorium</p>
           <address>Near E.B. Bus Stop, Gandhi Nagar, Katpadi – 632006</address>
-          <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=Don%20Bosco%20Auditorium%2C%20Gandhi%20Nagar%2C%20Katpadi%20632006" target="_blank" rel="noopener">
-            <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Dinner directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
-          </a>
+          <div class="venue-actions">
+            <a class="button button-outline" href="https://www.google.com/maps/dir/?api=1&amp;destination=Don%20Bosco%20Auditorium%2C%20Gandhi%20Nagar%2C%20Katpadi%20632006" target="_blank" rel="noopener">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Dinner directions <svg class="icon trailing" aria-hidden="true"><use href="#icon-up-right"/></svg>
+            </a>
+            <a class="button section-next" href="#closing" aria-label="Scroll or tap for next: Closing blessing">Scroll or tap for next <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
+          </div>
         </div>
       </article>
     </section>
 
-    <section class="blessing image-section" id="closing" aria-labelledby="blessing-heading">
+    <section class="blessing image-section" id="closing" aria-labelledby="blessing-heading" tabindex="-1">
       <div class="section-art blessing-art" aria-hidden="true"></div>
       <div class="wrap blessing-inner">
         <div class="faith-mark" aria-hidden="true"><svg class="icon"><use href="#icon-cross"/></svg></div>

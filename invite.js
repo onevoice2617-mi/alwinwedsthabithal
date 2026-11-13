@@ -2,6 +2,26 @@ const intro = document.querySelector('.site-intro');
 const openingImage = document.querySelector('.opening-art img');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const opening = openingImage.closest('.image-section');
+const dateSection = document.querySelector('.date-section');
+const canObserveScenes = 'IntersectionObserver' in window;
+
+dateSection.classList.add('next-pending');
+if (!reducedMotion.matches) {
+  opening.classList.add('next-pending');
+  if (canObserveScenes) {
+    for (const section of document.querySelectorAll('.arrival, .venue')) {
+      section.classList.add('next-pending');
+    }
+  }
+}
+
+async function revealNextAfterAnimations(section) {
+  const animations = section.getAnimations?.({ subtree: true }) ?? [];
+  const pending = animations.filter(animation => animation.animationName &&
+    Number.isFinite(animation.effect.getComputedTiming().endTime));
+  await Promise.allSettled(pending.map(animation => animation.finished));
+  section.classList.replace('next-pending', 'next-ready');
+}
 
 function finishIntroWhenReady() {
   const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 820));
@@ -13,6 +33,7 @@ intro.addEventListener('animationend', event => {
   if (event.target !== intro) return;
   intro.hidden = true;
   opening.classList.add('scene-entered');
+  revealNextAfterAnimations(opening);
   observeScenes();
 });
 
@@ -25,7 +46,7 @@ window.addEventListener('pageshow', event => {
 });
 
 function observeScenes() {
-  if (!('IntersectionObserver' in window)) return;
+  if (!canObserveScenes) return;
 
   // Play a scene once when it enters view. Scrolling stays in the browser's control.
   const scenes = new IntersectionObserver(entries => {
@@ -35,6 +56,7 @@ function observeScenes() {
       if (entry.intersectionRatio < minimumVisible) continue;
       entry.target.classList.add('scene-entered');
       scenes.unobserve(entry.target);
+      if (entry.target !== dateSection) revealNextAfterAnimations(entry.target);
     }
   }, { threshold: [.28, .52, .67] });
 
@@ -44,6 +66,13 @@ function observeScenes() {
 }
 
 if (reducedMotion.matches) observeScenes();
+reducedMotion.addEventListener('change', event => {
+  if (event.matches && !intro.hidden) {
+    intro.hidden = true;
+    opening.classList.remove('next-pending');
+    observeScenes();
+  }
+});
 
 const countdown = document.querySelector('.countdown');
 const units = [...countdown.querySelectorAll('[data-unit]')];
@@ -102,7 +131,7 @@ const confetti = document.querySelector('.date-confetti');
 
 dateCard.hidden = true;
 dateTrigger.hidden = false;
-dateTrigger.addEventListener('click', () => {
+dateTrigger.addEventListener('click', async () => {
   const animate = !reducedMotion.matches;
   if (animate) {
     dateTrigger.classList.add('is-opening');
@@ -114,7 +143,10 @@ dateTrigger.addEventListener('click', () => {
   dateCard.classList.add('just-revealed');
   dateCard.querySelector('time').focus({ preventScroll: true });
 
-  if (!animate) return;
+  if (!animate) {
+    dateSection.classList.remove('next-pending');
+    return;
+  }
 
   const colors = ['#a14c35', '#d49358', '#788655', '#eab09e', '#cba45e'];
   const pieces = document.createDocumentFragment();
@@ -130,7 +162,8 @@ dateTrigger.addEventListener('click', () => {
     pieces.append(piece);
   }
   confetti.append(pieces);
-  window.setTimeout(() => confetti.replaceChildren(), 1900);
+  await revealNextAfterAnimations(dateSection);
+  confetti.replaceChildren();
 }, { once: true });
 
 const calendarDialog = document.querySelector('.calendar-dialog');
