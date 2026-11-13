@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Alwin and Thabithal//Wedding Invitation//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:20261210-ceremony@alwinwedsthabithal
+DTSTAMP:20261113T000000Z
+DTSTART:20261210T103000Z
+SUMMARY:Alwin & Thabithal - Wedding ceremony
+LOCATION:CSI Central Church\, Anna Salai\, Vellore - 632004
+END:VEVENT
+BEGIN:VEVENT
+UID:20261210-reception@alwinwedsthabithal
+DTSTAMP:20261113T000000Z
+DTSTART:20261210T133000Z
+SUMMARY:Alwin & Thabithal - Reception
+LOCATION:Don Bosco A/C Auditorium\, Near E.B. Bus Stop\, Gandhi Nagar\,
+  Katpadi - 632006
+END:VEVENT
+END:VCALENDAR
