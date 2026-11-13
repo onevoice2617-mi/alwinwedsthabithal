@@ -83,7 +83,31 @@ if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
 }
 
 const progress = document.querySelector('.reading-line');
+const arrival = document.querySelector('.arrival');
+const arrivalTrack = arrival.querySelector('.arrival-track');
+const arrivalStage = arrival.querySelector('.arrival-stage');
+const walker = arrival.querySelector('.arrival-walker');
 let progressFrame;
+
+function updateArrival() {
+  if (motion.matches) return;
+
+  const track = arrivalTrack.getBoundingClientRect();
+  const stage = arrivalStage.getBoundingClientRect();
+  const travel = track.height - stage.height;
+  if (travel <= 0) return;
+
+  const progress = Math.max(0, Math.min(1, (stage.top - track.top) / travel));
+  const stride = progress * Math.PI * 14;
+  const sway = Math.sin(stride) * (1 - progress);
+  const opacity = 1 - Math.max(0, (progress - 0.82) / 0.18);
+  walker.style.setProperty('--bride-y', 95 - 39 * progress + '%');
+  walker.style.setProperty('--bride-scale', 1 - 0.62 * progress);
+  walker.style.setProperty('--bride-opacity', opacity);
+  walker.style.setProperty('--bride-sway', sway * 3 + '%');
+  walker.style.setProperty('--bride-step', -Math.abs(Math.sin(stride)) * (1 - progress) * 1.4 + '%');
+  walker.style.setProperty('--bride-lean', sway * 3 + 'deg');
+}
 
 function requestProgressUpdate() {
   if (progressFrame) return;
@@ -91,6 +115,7 @@ function requestProgressUpdate() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const fraction = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
     progress.style.setProperty('--progress', fraction);
+    updateArrival();
     progressFrame = null;
   });
 }
@@ -98,6 +123,9 @@ function requestProgressUpdate() {
 window.addEventListener('scroll', requestProgressUpdate, { passive: true });
 window.addEventListener('resize', requestProgressUpdate);
 window.addEventListener('load', requestProgressUpdate);
+motion.addEventListener('change', requestProgressUpdate);
+arrival.classList.add('arrival-animated');
+requestProgressUpdate();
 
 const calendarDialog = document.querySelector('.calendar-dialog');
 if (typeof calendarDialog.showModal === 'function') {
