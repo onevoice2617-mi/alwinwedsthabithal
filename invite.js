@@ -1,7 +1,28 @@
+const intro = document.querySelector('.site-intro');
+const openingImage = document.querySelector('.opening-art img');
+
+function finishIntroWhenReady() {
+  const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 820));
+  const imageReady = openingImage.decode().catch(() => {});
+  Promise.all([minimumDisplay, imageReady]).then(() => intro.classList.add('is-ready'));
+}
+
+intro.addEventListener('animationend', event => {
+  if (event.target === intro) intro.hidden = true;
+});
+
+finishIntroWhenReady();
+window.addEventListener('pageshow', event => {
+  if (!event.persisted) return;
+  intro.classList.remove('is-ready');
+  intro.hidden = false;
+  finishIntroWhenReady();
+});
+
 const countdown = document.querySelector('.countdown');
 const units = [...countdown.querySelectorAll('[data-unit]')];
 const ceremonyStarts = new Date(countdown.dataset.start).getTime();
-const receptionStarts = new Date(document.querySelector('.venue-reception time').dateTime).getTime();
+const receptionStarts = new Date(document.querySelector('#reception-time').dateTime).getTime();
 let countdownTimeout;
 
 function updateCountdown() {
@@ -44,88 +65,157 @@ function updateCountdown() {
 }
 
 updateCountdown();
+countdown.hidden = false;
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) return;
   clearTimeout(countdownTimeout);
   updateCountdown();
 });
 
-const motion = matchMedia('(prefers-reduced-motion: reduce)');
-if ('IntersectionObserver' in window && !motion.matches) {
-  const revealObserver = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-      entry.target.classList.remove('reveal-pending');
-      revealObserver.unobserve(entry.target);
-    }
-  }, { threshold: 0.12 });
+const filmMotion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 540px)');
+const film = document.querySelector('.film');
+const stage = film.querySelector('.film-stage');
+const progressLine = document.querySelector('.reading-line');
+const nextScene = film.querySelector('.film-next');
+const scenes = [...film.querySelectorAll('[data-scene]')];
 
-  for (const element of document.querySelectorAll('.reveal')) {
-    element.classList.add('reveal-pending');
-    revealObserver.observe(element);
+// Each cut starts before the preceding shot ends. Times are in viewport heights.
+const cuts = [
+  { start: 1.52, end: 2.10, glow: 0.36, origin: '50% 44%' },
+  { start: 2.52, end: 3.06, glow: 0.48, origin: '57% 46%' },
+  { start: 3.48, end: 4.03, glow: 0.31, origin: '48% 56%' },
+  { start: 4.52, end: 5.08, glow: 0.42, origin: '42% 60%' },
+  { start: 5.53, end: 6.18, glow: 0.22, origin: '55% 52%' }
+];
+const stops = [
+  { id: 'invitation', time: 0.96 },
+  { id: 'arrival', time: 2.22 },
+  { id: 'details', time: 3.18 },
+  { id: 'ceremony', time: 4.16 },
+  { id: 'venues', time: 5.20 },
+  { id: 'closing', time: 6.29 }
+];
+const filmDuration = 6.48;
+let frame = 0;
+let seekFrame = 0;
+let previousActive = -1;
+film.style.setProperty('--film-duration', filmDuration);
+
+function easeBetween(value, start, end) {
+  const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
+  return t * t * (3 - 2 * t);
+}
+
+function playAt(time) {
+  const mixes = cuts.map(cut => easeBetween(time, cut.start, cut.end));
+  const active = mixes.filter(mix => mix >= 0.5).length;
+
+  scenes.forEach((scene, index) => {
+    const incoming = mixes[index - 1] ?? 1;
+    const outgoing = mixes[index] ?? 0;
+    const start = cuts[index - 1]?.start ?? 0;
+    const end = cuts[index]?.end ?? filmDuration;
+    const camera = Math.max(0, Math.min(1, (time - start) / (end - start)));
+    const caption = easeBetween(incoming, 0.42, 1) * (1 - easeBetween(outgoing, 0, 0.58));
+
+    scene.style.setProperty('--mix', incoming);
+    scene.style.setProperty('--shot-visibility', incoming > 0 && outgoing < 1 ? 'visible' : 'hidden');
+    scene.style.setProperty('--scene-progress', camera);
+    scene.style.setProperty('--caption', caption);
+    scene.style.setProperty('--push', outgoing * (index === 0 ? 0.31 : 0.13));
+
+    if (active !== previousActive) scene.inert = index !== active;
+  });
+  previousActive = active;
+
+  const boardEnter = easeBetween(time, 0.29, 0.83);
+  const boardExit = easeBetween(time, 1.17, 1.77);
+  const titleOpacity = 1 - easeBetween(time, 0.22, 0.58);
+  stage.style.setProperty('--title-opacity', titleOpacity);
+  stage.style.setProperty('--board-enter', boardEnter);
+  stage.style.setProperty('--board-exit', boardExit);
+  stage.style.setProperty('--board-opacity', boardEnter * (1 - boardExit));
+
+  const cutIndex = mixes.findIndex(mix => mix > 0 && mix < 1);
+  if (cutIndex >= 0) {
+    const { glow, origin } = cuts[cutIndex];
+    stage.style.setProperty('--light', Math.sin(mixes[cutIndex] * Math.PI) * glow);
+    stage.style.setProperty('--light-origin', origin);
+  } else {
+    stage.style.setProperty('--light', 0);
+  }
+
+  const upcoming = stops.find(stop => stop.time > time + 0.17);
+  nextScene.hidden = !upcoming;
+  if (upcoming && nextScene.dataset.stop !== upcoming.id) {
+    nextScene.dataset.stop = upcoming.id;
+    nextScene.setAttribute('aria-label', upcoming.id === 'invitation' ? 'Scroll to begin' : 'Next scene');
   }
 }
 
-const photo = document.querySelector('.photo-frame');
-if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-  photo.addEventListener('pointermove', (event) => {
-    if (motion.matches || event.pointerType !== 'mouse') return;
-    const rect = photo.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    photo.style.setProperty('--photo-x', x * 14 + 'px');
-    photo.style.setProperty('--photo-y', y * 14 + 'px');
-  });
-  photo.addEventListener('pointerleave', () => {
-    photo.style.removeProperty('--photo-x');
-    photo.style.removeProperty('--photo-y');
-  });
-}
-
-const progress = document.querySelector('.reading-line');
-const arrival = document.querySelector('.arrival');
-const arrivalTrack = arrival.querySelector('.arrival-track');
-const arrivalStage = arrival.querySelector('.arrival-stage');
-const walker = arrival.querySelector('.arrival-walker');
-let progressFrame;
-
-function updateArrival() {
-  if (motion.matches) return;
-
-  const track = arrivalTrack.getBoundingClientRect();
-  const stage = arrivalStage.getBoundingClientRect();
-  const travel = track.height - stage.height;
-  if (travel <= 0) return;
-
-  const progress = Math.max(0, Math.min(1, (stage.top - track.top) / travel));
-  const stride = progress * Math.PI * 14;
-  const sway = Math.sin(stride) * (1 - progress);
-  const opacity = 1 - Math.max(0, (progress - 0.82) / 0.18);
-  walker.style.setProperty('--bride-y', 95 - 39 * progress + '%');
-  walker.style.setProperty('--bride-scale', 1 - 0.62 * progress);
-  walker.style.setProperty('--bride-opacity', opacity);
-  walker.style.setProperty('--bride-sway', sway * 3 + '%');
-  walker.style.setProperty('--bride-step', -Math.abs(Math.sin(stride)) * (1 - progress) * 1.4 + '%');
-  walker.style.setProperty('--bride-lean', sway * 3 + 'deg');
+function updateStory() {
+  if (filmMotion.matches) playAt(-film.getBoundingClientRect().top / stage.clientHeight);
+  const scrollLength = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  progressLine.style.setProperty('--progress', scrollLength > 0 ? window.scrollY / scrollLength : 0);
+  frame = 0;
 }
 
 function requestProgressUpdate() {
-  if (progressFrame) return;
-  progressFrame = requestAnimationFrame(() => {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const fraction = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
-    progress.style.setProperty('--progress', fraction);
-    updateArrival();
-    progressFrame = null;
-  });
+  if (!frame) frame = requestAnimationFrame(updateStory);
 }
 
+function seek(id, behavior) {
+  const stop = stops.find(item => item.id === id);
+  if (!stop || !filmMotion.matches) return false;
+  cancelSeek();
+  if (behavior !== 'instant') stage.focus({ preventScroll: true });
+  const from = window.scrollY;
+  const to = from + film.getBoundingClientRect().top + stop.time * stage.clientHeight;
+  if (behavior === 'instant') {
+    window.scrollTo({ top: to, behavior });
+    return true;
+  }
+
+  const duration = Math.min(1350, 650 + Math.abs(to - from) * 0.32);
+  const started = performance.now();
+  function advance(now) {
+    const elapsed = now - started;
+    const progress = easeBetween(elapsed, 0, duration);
+    window.scrollTo({ top: from + (to - from) * progress, behavior: 'instant' });
+    seekFrame = elapsed < duration ? requestAnimationFrame(advance) : 0;
+  }
+  seekFrame = requestAnimationFrame(advance);
+  return true;
+}
+
+function cancelSeek() {
+  cancelAnimationFrame(seekFrame);
+  seekFrame = 0;
+}
+
+function configureStory() {
+  document.documentElement.classList.toggle('story-motion', filmMotion.matches);
+  if (!filmMotion.matches) {
+    cancelSeek();
+    scenes.forEach(scene => { scene.inert = false; });
+    nextScene.hidden = true;
+    previousActive = -1;
+  }
+  requestProgressUpdate();
+}
+
+nextScene.addEventListener('click', () => seek(nextScene.dataset.stop, 'smooth'));
+window.addEventListener('wheel', cancelSeek, { passive: true });
+window.addEventListener('touchstart', cancelSeek, { passive: true });
+window.addEventListener('keydown', event => {
+  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) cancelSeek();
+});
 window.addEventListener('scroll', requestProgressUpdate, { passive: true });
 window.addEventListener('resize', requestProgressUpdate);
-window.addEventListener('load', requestProgressUpdate);
-motion.addEventListener('change', requestProgressUpdate);
-arrival.classList.add('arrival-animated');
-requestProgressUpdate();
+window.addEventListener('hashchange', () => seek(location.hash.slice(1), 'instant'));
+filmMotion.addEventListener('change', configureStory);
+configureStory();
+requestAnimationFrame(() => seek(location.hash.slice(1), 'instant'));
 
 const calendarDialog = document.querySelector('.calendar-dialog');
 if (typeof calendarDialog.showModal === 'function') {
