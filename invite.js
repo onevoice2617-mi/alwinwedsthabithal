@@ -146,9 +146,6 @@ const copyStatus = document.querySelector('[data-copy-status]');
 if (typeof shareDialog.showModal === 'function') {
   share.hidden = false;
   share.addEventListener('click', () => {
-    const url = new URL(window.location.href);
-    url.hash = '';
-    shareUrl.value = url.href;
     copyStatus.textContent = '';
     shareDialog.showModal();
   });
