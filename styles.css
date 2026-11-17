@@ -409,27 +409,7 @@ main > section, .venue { scroll-margin-top: 0; }
 }
 
 .arrival { place-items: end center; text-align: center; }
-.arrival::after { background: linear-gradient(0deg, #17291ff2, #17291fbb 20%, #17291f31 42%, transparent 57%); }
-.arrival-art { container-type: size; }
-.arrival-church { object-position: center bottom; }
-.arrival-walker {
-  /* Match the walking path to the church image as it crops to fit the screen. */
-  --church-image-height: max(100cqh, 66.667cqw);
-  --walk-start: calc(100% - .2 * var(--church-image-height));
-  --walk-end: calc(100% - .38 * var(--church-image-height));
-  position: absolute;
-  top: calc(100% - .28 * var(--church-image-height));
-  left: 50%;
-  width: min(37cqw, 23cqh, 13rem);
-  transform: translate(-50%, -100%) scale(.78);
-  transform-origin: 50% 100%;
-}
-.arrival-walker .arrival-bride {
-  height: auto;
-  object-fit: contain;
-  transform-origin: 50% 96%;
-  filter: drop-shadow(0 .2rem .16rem #412d2e66);
-}
+.arrival-art img { object-position: 61% 42%; transform-origin: 61% 42%; }
 .church-approach, .dinner-service { display: none; }
 .section-heading { padding-block: clamp(3rem, 9vh, 7rem); }
 .section-heading .eyebrow { color: #ffddb7; margin-bottom: .65rem; }
@@ -511,8 +491,7 @@ main > section, .venue { scroll-margin-top: 0; }
   }
   .date-card.just-revealed .date-display strong { animation: date-stamp .68s var(--ease) .33s both; }
 
-  .arrival.scene-entered .arrival-walker { animation: bride-approach 2.55s ease-in-out both; }
-  .arrival.scene-entered .arrival-bride { animation: bride-step .51s ease-in-out 5 both; }
+  .arrival.scene-entered .arrival-art img { animation: bride-approach 1.65s ease-in-out both; }
   .arrival.scene-entered .section-heading { animation: caption-enter 1.1s var(--ease) .35s both; }
 
   #ceremony.scene-entered .church-approach {
@@ -631,12 +610,7 @@ main > section, .venue { scroll-margin-top: 0; }
   100% { transform: scale(1); }
 }
 @keyframes bride-approach {
-  from { top: var(--walk-start); transform: translate(-50%, -100%) scale(1); }
-  to { top: var(--walk-end); transform: translate(-50%, -100%) scale(.58); }
-}
-@keyframes bride-step {
-  25% { transform: translateY(-1.4%) rotate(-1.4deg); }
-  75% { transform: translateY(-1.4%) rotate(1.4deg); }
+  to { transform: scale(1.08); }
 }
 @keyframes caption-enter { from { opacity: .45; transform: translateY(.7rem); } }
 @keyframes car-drive {
@@ -680,6 +654,7 @@ main > section, .venue { scroll-margin-top: 0; }
   .opening-copy { max-width: 27rem; }
   .opening h1 { font-size: clamp(3.35rem, 11vw, 5.6rem); }
   .opening h1 i { display: block; margin: .05em 0 .09em; font-size: .6em; }
+  .arrival-art img { object-position: 73% 42%; transform-origin: 50% 42%; }
   .venue { justify-items: center; }
   .venue-photo img { object-position: 50% 42%; }
   .date-reveal { min-height: 23rem; }
